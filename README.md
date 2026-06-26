@@ -16,7 +16,7 @@ A capsptone embedded systems project built on the Raspberry Pi Pico (RP2040). Fi
 
 ## Project Structure 
 
-
+```
 ├── src/                   # Source files
 │   ├── main.c             # if C/C++
 │   ├── main.rs            # if Rust
@@ -26,7 +26,7 @@ A capsptone embedded systems project built on the Raspberry Pi Pico (RP2040). Fi
 ├── Cargo.toml             # if Rust
 ├── .gitignore             # Specifies intentionally untracked files
 └── README.md              # Project documentation
-
+```
 
 ## Team
 
