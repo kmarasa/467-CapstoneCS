@@ -27,10 +27,11 @@ A capsptone embedded systems project built on the Raspberry Pi Pico (RP2040). Fi
 ├── .gitignore             # Specifies intentionally untracked files
 └── README.md              # Project documentation
 ```
-
+```
 ## Team
 
 |      Name       |    GitHub   |
 | Kyle Marasa     | @kmarasa
 | Dorit Dorsey    | 
 | Margaret Barnes |
+```
