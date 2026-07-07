@@ -1,0 +1,15 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+      - name: Run clang-format check  
+        run: |
+          find src/ include/ -name "*.c" -o -name "*.h" | \
+          xargs clang-format --dry-run --Werror
