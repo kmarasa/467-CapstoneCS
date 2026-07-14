@@ -3,20 +3,26 @@
 float humd = 0;
 DHT20 humd_sensor;
 
-void initialize()
-{
-    // start DHT20 sensor
-    // will return 0 if successful
+/*
+Run setup for main program
+*/
+void initialize(){
+    /*
+    Initialize DHT20 sensor on GPIO 4/5 with address 0x38
+    Will also set initial values on DHT20 object
+    Returns 0 if successful
+    */
     start_DHT20_sensor(&humd_sensor);
 }
 
-int main()
-{
+/*
+Runs main program loop after running setup
+*/
+int main(){
     // initialize all the components
     initialize();
 
-    while (1)
-    {
+    while (1){
         // get humidity from DHT20 sensor
         take_measurement(&humd_sensor)
 
