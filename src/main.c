@@ -4,15 +4,15 @@ float humd = 0;
 DHT20 humd_sensor;
 
 /*
-Run setup for main program
-*/
+ *Run setup for main program
+ */
 void initialize()
 {
     /*
-    Initialize DHT20 sensor on GPIO 4/5 with address 0x38
-    Will also set initial values on DHT20 object
-    Returns 0 if successful
-    */
+     *Initialize DHT20 sensor on GPIO 4/5 with address 0x38
+     *Will also set initial values on DHT20 object
+     *Returns 0 if successful
+     */
     start_DHT20_sensor(&humd_sensor);
 }
 
