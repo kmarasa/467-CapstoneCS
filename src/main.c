@@ -6,7 +6,8 @@ DHT20 humd_sensor;
 /*
 Run setup for main program
 */
-void initialize(){
+void initialize()
+{
     /*
     Initialize DHT20 sensor on GPIO 4/5 with address 0x38
     Will also set initial values on DHT20 object
@@ -18,11 +19,13 @@ void initialize(){
 /*
 Runs main program loop after running setup
 */
-int main(){
+int main()
+{
     // initialize all the components
     initialize();
 
-    while (1){
+    while (1)
+    {
         // get humidity from DHT20 sensor
         take_measurement(&humd_sensor)
 
