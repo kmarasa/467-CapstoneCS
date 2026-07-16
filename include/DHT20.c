@@ -203,7 +203,7 @@ static int verify_checksum(DHT20 *sensor) {
   for (i = 0; i < 6; i++)
     CRC = CRC_8_TABLE[CRC ^ sensor->bytes[i]];
 
-  return sensor->bytes[6]==CRC;
+  return sensor->bytes[6] == CRC;
 }
 
 static int convert_humidity(DHT20 *sensor) {
