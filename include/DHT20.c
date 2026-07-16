@@ -1,41 +1,55 @@
+/*
+Functions to setup and run DHT20 sensor using
+I2C protocol on GPIO 4 and 5.
+Strong influence from:
+https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
+
+Modifications include reduction and refactor.
+Extra unnecessary functions were rewritten and slight
+changes made to how the remaining functions run.
+*/
+
 #include "DHT20.h"
 
-// define error codes for sensor
-// not_resetting means tried to run reset codes
-// 5 times and sensor is still not resetting
+/*
+Error Codes
+1 = Attempts at resetting sensor failed
+2 = Not enough time elasped between reading calls
+3 = Pico generic error
+4 = Data still generating by sensor
+5 = all retrieved bytes are zero
+6 = Checksum was not correct
+100 = No clue what went wrong.
+*/
 static const int not_resetting = 1;
-// have_patience means trying to call for another
-// reading too quickly. slow down.
 static const int have_patience = 2;
-// pico generic error
 static const int pico_error = 3;
-// still retrieving data wait and try again
 static const int still_measuring = 4;
-// after retrieving the measurement
-// all bytes are still zero
 static const int no_measurement = 5;
-// checksum is not correct
 static const int incorrect_checksum = 6;
-// general error code for all other cases
-// made large for extra space for more errors
 static const int cry_inside = 100;
 
 // max amount of attempts to try to connect to sensor
 static const int attempts = 5;
 
-// messages defined on pg. 10 in DHT20 documentation
+/*
+Defined on pg. 10 of DHT20 Documentation
+reset_i are messages to be sent to sensor to reset it.
+request is the message to request sensor to take
+a measurement.
+*/
 static const uint8_t reset_1[3] = {0x1B, 0x00, 0x00};
 static const uint8_t reset_2[3] = {0x1C, 0x00, 0x00};
 static const uint8_t reset_3[3] = {0x1E, 0x00, 0x00};
 static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 
-// define which i2c channel to use and address of DHT20
+// Define which i2c channel to use and address of DHT20
 #ifndef DHT20_I2C
 #define DHT20_I2C i2c0
 #endif
 #define DHT20_ADDRESS 0x38
 
-// define sda/scl pins for dht20 as GPIO 4/5
+// Define sda/scl pins for dht20 as GPIO 4/5
 #ifndef DHT20_I2C_SDA_PIN
 #define DHT20_I2C_SDA_PIN 4
 #endif
@@ -43,7 +57,11 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 #define DHT20_I2C_SCL_PIN 5
 #endif
 
-// initialize controller for i2c channel
+/*
+Private function to initialize controller for i2c channel.
+Uses defined value to set to channel i2c0 on address 0x38
+using GPIO 4/5 as the SDA and SCL pins.
+*/
 static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
   sleep_ms(2000);
@@ -55,19 +73,28 @@ static void set_DHT_controller() {
   gpio_pull_up(DHT20_I2C_SCL_PIN);
 }
 
-// returns 0 if status and 0x18 =/= 0x18
-// in documentation for DHT20 sensor (pg. 10?)
-static int needs_reset(DHT20 *sensor) {
+/*
+Private function to handle resetting sensor
+Instructions in DHT20 sensor documentation pg. 10
+Checks if status and 0x18 =/= 0x18 and sends
+reset messages if not.
+Returns 0 if success
+*/
+static int handle_reset(DHT20 *sensor) {
+  int count = 0;
   uint8_t status;
   i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
-  return (status & 0x18) != 0x18;
-}
-
-static void reset_sensor(DHT20 *sensor) {
-  // sends reset codes defined in documentation
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_1, 3, false);
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_2, 3, false);
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
+  while ((status & 0x18) != 0x18) {
+    i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_1, 3, false);
+    i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_2, 3, false);
+    i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
+    count++;
+    sleep_ms(100);
+    if (count > attempts) {
+      return not_resetting;
+    }
+  }
+  return 0;
 }
 
 static void initialize_values(DHT20 *sensor) {
@@ -91,18 +118,12 @@ int start_DHT20_sensor(DHT20 *sensor) {
   // wait in controller start might work for this
 
   // reset sensor
-  int count = 0;
-  while (!needs_reset(sensor)) {
-    reset_sensor(sensor);
-    count++;
-    sleep_ms(100);
-    if (count > attempts) {
-      return not_resetting;
-    }
-  }
-  return 0;
+  return handle_reset(sensor);
 };
 
+/*
+Public function to retrieve the humidity value store.
+*/
 float get_humidity(DHT20 *sensor) { return sensor->humidity; }
 
 static int retrieve_measure(DHT20 *sensor) {
@@ -153,6 +174,8 @@ static int convert_humidity(DHT20 *sensor) {
 
   return 0;
 }
+
+
 
 int take_measurement(DHT20 *sensor) {
   // check time since last measurement
