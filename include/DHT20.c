@@ -1,41 +1,83 @@
-#include "DHT20.h"
+/*
+Functions to setup and run DHT20 sensor using
+I2C protocol on GPIO 4 and 5.
+Strong influence from:
+https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
 
-// define error codes for sensor
-// not_resetting means tried to run reset codes
-// 5 times and sensor is still not resetting
+Modifications include reduction and refactor.
+Extra unnecessary functions were rewritten and slight
+changes made to how the remaining functions run.
+*/
+
+#include "DHT20.h"
+#include <pico/time.h>
+
+/*
+Error Codes
+1 = Attempts at resetting sensor failed
+2 = Not enough time elasped between reading calls
+3 = Pico generic error
+4 = Data still generating by sensor
+5 = all retrieved bytes are zero
+6 = Checksum was not correct
+100 = No clue what went wrong.
+*/
 static const int not_resetting = 1;
-// have_patience means trying to call for another
-// reading too quickly. slow down.
 static const int have_patience = 2;
-// pico generic error
 static const int pico_error = 3;
-// still retrieving data wait and try again
 static const int still_measuring = 4;
-// after retrieving the measurement
-// all bytes are still zero
 static const int no_measurement = 5;
-// checksum is not correct
 static const int incorrect_checksum = 6;
-// general error code for all other cases
-// made large for extra space for more errors
+static const int pico_error_1 = 7;
+static const int pico_error_2 = 8;
 static const int cry_inside = 100;
 
 // max amount of attempts to try to connect to sensor
 static const int attempts = 5;
 
-// messages defined on pg. 10 in DHT20 documentation
+/*
+Lookup table for quickier checking of CRC
+Take from: https://oshgarage.com/the-crc8-checksum/
+CRC 8 lookup table
+*/
+static const uint8_t CRC_8_TABLE[256] = {
+    0,   94,  188, 226, 97,  63,  221, 131, 194, 156, 126, 32,  163, 253, 31,
+    65,  157, 195, 33,  127, 252, 162, 64,  30,  95,  1,   227, 189, 62,  96,
+    130, 220, 35,  125, 159, 193, 66,  28,  254, 160, 225, 191, 93,  3,   128,
+    222, 60,  98,  190, 224, 2,   92,  223, 129, 99,  61,  124, 34,  192, 158,
+    29,  67,  161, 255, 70,  24,  250, 164, 39,  121, 155, 197, 132, 218, 56,
+    102, 229, 187, 89,  7,   219, 133, 103, 57,  186, 228, 6,   88,  25,  71,
+    165, 251, 120, 38,  196, 154, 101, 59,  217, 135, 4,   90,  184, 230, 167,
+    249, 27,  69,  198, 152, 122, 36,  248, 166, 68,  26,  153, 199, 37,  123,
+    58,  100, 134, 216, 91,  5,   231, 185, 140, 210, 48,  110, 237, 179, 81,
+    15,  78,  16,  242, 172, 47,  113, 147, 205, 17,  79,  173, 243, 112, 46,
+    204, 146, 211, 141, 111, 49,  178, 236, 14,  80,  175, 241, 19,  77,  206,
+    144, 114, 44,  109, 51,  209, 143, 12,  82,  176, 238, 50,  108, 142, 208,
+    83,  13,  239, 177, 240, 174, 76,  18,  145, 207, 45,  115, 202, 148, 118,
+    40,  171, 245, 23,  73,  8,   86,  180, 234, 105, 55,  213, 139, 87,  9,
+    235, 181, 54,  104, 138, 212, 149, 203, 41,  119, 244, 170, 72,  22,  233,
+    183, 85,  11,  136, 214, 52,  106, 43,  117, 151, 201, 74,  20,  246, 168,
+    116, 42,  200, 150, 21,  75,  169, 247, 182, 232, 10,  84,  215, 137, 107,
+    53};
+
+/*
+Defined on pg. 10 of DHT20 Documentation
+reset_i are messages to be sent to sensor to reset it.
+request is the message to request sensor to take
+a measurement.
+*/
 static const uint8_t reset_1[3] = {0x1B, 0x00, 0x00};
 static const uint8_t reset_2[3] = {0x1C, 0x00, 0x00};
 static const uint8_t reset_3[3] = {0x1E, 0x00, 0x00};
 static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 
-// define which i2c channel to use and address of DHT20
+// Define which i2c channel to use and address of DHT20
 #ifndef DHT20_I2C
 #define DHT20_I2C i2c0
 #endif
 #define DHT20_ADDRESS 0x38
 
-// define sda/scl pins for dht20 as GPIO 4/5
+// Define sda/scl pins for dht20 as GPIO 4/5
 #ifndef DHT20_I2C_SDA_PIN
 #define DHT20_I2C_SDA_PIN 4
 #endif
@@ -43,7 +85,11 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 #define DHT20_I2C_SCL_PIN 5
 #endif
 
-// initialize controller for i2c channel
+/*
+Private function to initialize controller for i2c channel.
+Uses defined value to set to channel i2c0 on address 0x38
+using GPIO 4/5 as the SDA and SCL pins.
+*/
 static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
   sleep_ms(2000);
@@ -55,31 +101,49 @@ static void set_DHT_controller() {
   gpio_pull_up(DHT20_I2C_SCL_PIN);
 }
 
-// returns 0 if status and 0x18 =/= 0x18
-// in documentation for DHT20 sensor (pg. 10?)
-static int needs_reset(DHT20 *sensor) {
-  uint8_t status;
-  i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
-  return (status & 0x18) != 0x18;
-}
-
-static void reset_sensor(DHT20 *sensor) {
-  // sends reset codes defined in documentation
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_1, 3, false);
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_2, 3, false);
-  i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
-}
-
+/*
+Private function to initialize the values of the
+DHT20 sensor object to zero.
+*/
 static void initialize_values(DHT20 *sensor) {
   sensor->humidity = 0;
-  sensor->humOffset = 0;
 
   sensor->lastRead = 0;
-  sensor->crc = 0;
 
   memset(sensor->bytes, 0, 7);
 }
 
+/*
+Private function to handle resetting sensor
+Instructions in DHT20 sensor documentation pg. 10
+Checks if status and 0x18 =/= 0x18 and sends
+reset messages if not.
+Returns 0 if success
+*/
+static int handle_reset(DHT20 *sensor) {
+  uint8_t status;
+  i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
+  for (int count = 0; count < attempts; count++) {
+    if ((status & 0x18) != 0x18) {
+      i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_1, 3, false);
+      i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_2, 3, false);
+      i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
+    } else if ((status & 0x18) == 0x18) {
+      return 0;
+    } else if (count == attempts - 1) {
+      return not_resetting;
+    }
+    sleep_ms(10);
+    i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
+  }
+}
+
+/*
+Public function to setup up DHT20 sensor
+for its first time. Will create I2C controller
+and initialize the values of the sensor.
+Returns 0 if successful
+*/
 int start_DHT20_sensor(DHT20 *sensor) {
   // start controller
   set_DHT_controller();
@@ -91,24 +155,17 @@ int start_DHT20_sensor(DHT20 *sensor) {
   // wait in controller start might work for this
 
   // reset sensor
-  int count = 0;
-  while (!needs_reset(sensor)) {
-    reset_sensor(sensor);
-    count++;
-    sleep_ms(100);
-    if (count > attempts) {
-      return not_resetting;
-    }
-  }
-  return 0;
+  return handle_reset(sensor);
 };
 
-float get_humidity(DHT20 *sensor) { return sensor->humidity; }
-
+/*
+Private function used to check if measurement
+is ready and verify the contents.
+Returns 0 if successful.
+*/
 static int retrieve_measure(DHT20 *sensor) {
-  int result =
-      i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, sensor->bytes, 7, false);
-  if (result == PICO_ERROR_GENERIC) {
+  if (i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, sensor->bytes, 7, false) ==
+      PICO_ERROR_GENERIC) {
     return pico_error;
   }
 
@@ -118,22 +175,35 @@ static int retrieve_measure(DHT20 *sensor) {
   }
 
   // check to make sure bytes aren't all zero
-  int sum = 0;
-  for (int i = 0; i < 7; i++) {
-    sum = sum + sensor->bytes[i];
-  }
-  if (sum) {
-    return no_measurement;
+  for (int i = 0; i < 6; i++) {
+    if (sensor->bytes[i] > 0) {
+      break;
+    } else if (i == 5) {
+      return no_measurement;
+    }
   }
 
   sensor->lastRead = to_ms_since_boot(get_absolute_time());
   return 0;
 }
 
+/*
+Private function used to verify the bytes of
+data sent by the sensor using CRC8 maxim
+with initial value of 0xFF according to pg. 10
+of DHT20 documentation. Use table lookup for
+faster calculation.
+Returns zero if match
+*/
 static int verify_checksum(DHT20 *sensor) {
-  // still needs implemented.
-  // information about crc in on pg. 10 #4
-  return 0;
+
+  int i;
+  uint8_t CRC = 0xFF;
+
+  for (i = 0; i < 6; i++)
+    CRC = CRC_8_TABLE[CRC ^ sensor->bytes[i]];
+
+  return sensor->bytes[6]==CRC;
 }
 
 static int convert_humidity(DHT20 *sensor) {
@@ -154,6 +224,11 @@ static int convert_humidity(DHT20 *sensor) {
   return 0;
 }
 
+/*
+Public function that requests, retrieves and
+processes measurement from the DHT20 sensor.
+Return 0 if successful
+*/
 int take_measurement(DHT20 *sensor) {
   // check time since last measurement
   if (to_ms_since_boot(get_absolute_time()) - sensor->lastRead < 1000) {
@@ -161,31 +236,28 @@ int take_measurement(DHT20 *sensor) {
   }
 
   // send message to dht20 to start measuring
-  //  PICO_ERROR_GENERIC is a failure code is SDK (-2)
-  int trigger_measure =
-      i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, request, 3, false);
-  if (trigger_measure == PICO_ERROR_GENERIC) {
-    return pico_error;
+  if (i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, request, 3, false) ==
+      PICO_ERROR_GENERIC) {
+    return pico_error_1;
   }
 
   // wait until dht20 has finished collecting measurement
   sleep_ms(80);
-  // wait 80 ms for measurement (pg. 10?)
-  // if read status bit[7] = 0, measurement is complete
-  int completed = retrieve_measure(sensor);
-  int count = 0;
-  // may be able to check if completed == still_measuring
-  while (!completed) {
-    sleep_ms(10);
-    completed = retrieve_measure(sensor);
-    count++;
-    if (count > attempts) {
-      return pico_error;
+  for (int count = 0; count < attempts; count++) {
+    if (!retrieve_measure(sensor)) {
+      break;
+    } else if (count == attempts - 1) {
+      return pico_error_2;
     }
+    sleep_ms(10);
   }
 
-  // convert humidity using formula on pg. 11
   convert_humidity(sensor);
-
   return 0;
 }
+
+/*
+Public function to retrieve the humidity value store.
+Returns last retrieved humidity value as float
+*/
+float get_humidity(DHT20 *sensor) { return sensor->humidity; }
