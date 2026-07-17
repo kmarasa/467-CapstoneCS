@@ -24,9 +24,9 @@ int main() {
 
   while (1) {
     // get humidity from DHT20 sensor
-    take_measurement(&humd_sensor)
-
-        // store humidity from sensor
-        humd = get_humidity(&humd_sensor);
+    if (take_measurement(&humd_sensor) == 0) {
+      // store humidity from sensor
+      humd = get_humidity(&humd_sensor);
+    }
   }
 }
