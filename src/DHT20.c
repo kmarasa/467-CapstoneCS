@@ -94,7 +94,6 @@ static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
   sleep_ms(2000);
 #endif
-  // only breaking difference I see is this really
   i2c_init(DHT20_I2C, 100000);
   gpio_set_function(DHT20_I2C_SDA_PIN, GPIO_FUNC_I2C);
   gpio_set_function(DHT20_I2C_SCL_PIN, GPIO_FUNC_I2C);
