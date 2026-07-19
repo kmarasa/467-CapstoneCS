@@ -73,16 +73,16 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 
 // Define which i2c channel to use and address of DHT20
 #ifndef DHT20_I2C
-#define DHT20_I2C i2c0
+#define DHT20_I2C i2c1
 #endif
 #define DHT20_ADDRESS 0x38
 
 // Define sda/scl pins for dht20 as GPIO 4/5
 #ifndef DHT20_I2C_SDA_PIN
-#define DHT20_I2C_SDA_PIN 4
+#define DHT20_I2C_SDA_PIN 6
 #endif
 #ifndef DHT20_I2C_SCL_PIN
-#define DHT20_I2C_SCL_PIN 5
+#define DHT20_I2C_SCL_PIN 7
 #endif
 
 #define I2C_BAUD_RATE 50000

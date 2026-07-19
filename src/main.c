@@ -42,7 +42,7 @@ int main() {
       humidity = get_humidity(&humidity_sensor);
 
       set_leds(humidity);
-      // lcd_show_humidity(humidity);
+      lcd_show_humidity(humidity);
     } else if (DHT20Err == 2){
       sleep_ms(1000);
     } else {
