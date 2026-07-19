@@ -1,8 +1,9 @@
 #include "../include/DHT20.h"
 #include "../include/led_array.h"
+#include "../include/lcd.h"
 
-float humd = 0;
-DHT20 humd_sensor;
+float humidity = 0;
+DHT20 humidity_sensor;
 
 /*
  *Run setup for main program
@@ -13,11 +14,15 @@ void initialize() {
    *Will also set initial values on DHT20 object
    *Returns 0 if successful
    */
-  start_DHT20_sensor(&humd_sensor);
+  start_DHT20_sensor(&humidity_sensor);
 
   init_leds();
 
   test_leds();
+
+  lcd_init();
+
+  lcd_test();
 }
 
 /*
@@ -27,13 +32,19 @@ int main() {
   // initialize all the components
   initialize();
 
+  int error = 0;
   while (1) {
     // get humidity from DHT20 sensor
-    if (take_measurement(&humd_sensor) == 0) {
+    error = take_measurement(&humidity_sensor);
+    if (error == 0) {
       // store humidity from sensor
-      humd = get_humidity(&humd_sensor);
+      humidity = get_humidity(&humidity_sensor);
 
-      set_leds(humd);
+      set_leds(humidity);
+      lcd_show_humidity(humidity);
+    } else {
+      lcd_print_error(error);
     }
+    sleep_ms(1000);
   }
 }
