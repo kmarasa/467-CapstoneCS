@@ -124,8 +124,7 @@ void lcd_init() {
   // Make the I2C pins available to picotool
   bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN,
                              GPIO_FUNC_I2C));
-
-  lcd_send_byte(0x03, LCD_COMM AND);
+  lcd_send_byte(0x03, LCD_COMMAND);
   lcd_send_byte(0x03, LCD_COMMAND);
   lcd_send_byte(0x03, LCD_COMMAND);
   lcd_send_byte(0x02, LCD_COMMAND);

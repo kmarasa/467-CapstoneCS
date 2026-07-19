@@ -6,7 +6,6 @@ Maps humidity percentage level to number of LEDs lit.
 */
 
 #include "led_array.h"
-
 #include "pico/stdlib.h"
 
 #define LED_1 14 // Green 1 1-20% humidity
@@ -70,25 +69,4 @@ void set_leds(float humidity) {
   for (int i = 0; i < num_leds; i++) {
     gpio_put(led_pins[i], i < leds_on ? 1 : 0);
   }
-}
-
-void set_leds_for_error(int error) {
-  if (error < 100) {
-    for (int i = 0; i < num_leds; i++) {
-      gpio_put(led_pins[i], 1);
-    }
-    sleep_ms(100);
-
-    for (int i = 0; i < num_leds; i++) {
-      gpio_put(led_pins[i], 0);
-    }
-    sleep_ms(100);
-  } else {
-    for (int i = 0; i < num_leds; i++) {
-      gpio_put(led_pins[i], 1);
-      sleep_ms(100);
-      gpio_put(led_pins[i], 0);
-    }
-  }
-  sleep_ms(1000);
 }
