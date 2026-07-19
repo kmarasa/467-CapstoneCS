@@ -25,9 +25,9 @@ crc (uint8_t) stores the checksum to verify the data from the sensor
 bytes (uint8_t) stores the last retrieved set of bytes
 */
 typedef struct DHT20 {
-    float humidity;
-    uint32_t lastRead;
-    uint8_t bytes[7];
+  float humidity;
+  uint32_t lastRead;
+  uint8_t bytes[7];
 } DHT20;
 
 /*
@@ -36,17 +36,17 @@ for its first time. Will create I2C controller
 and initialize the values of the sensor.
 Returns 0 if successful
 */
-int start_DHT20_sensor(DHT20* sensor);
+int start_DHT20_sensor(DHT20 *sensor);
 
 /*
 Public function that requests, retrieves and
 processes measurement from the DHT20 sensor.
 Return 0 if successful
 */
-int take_measurement(DHT20* sensor);
+int take_measurement(DHT20 *sensor);
 
 /*
 Public function to retrieve the humidity value store.
 Returns last retrieved humidity value as float
 */
-float get_humidity(DHT20* sensor);
+float get_humidity(DHT20 *sensor);
