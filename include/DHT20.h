@@ -6,15 +6,14 @@ Define DHT20 object to store and be used
 to run the DHT20 sensor.
 */
 
+#include "hardware/i2c.h"
+#include "pico/stdlib.h"
 #include <inttypes.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "hardware/i2c.h"
-#include "pico/stdlib.h"
 
 /*
 Defines DHT20 object that will store information
