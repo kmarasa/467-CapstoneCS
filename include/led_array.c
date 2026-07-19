@@ -70,3 +70,24 @@ void set_leds(float humidity) {
     gpio_put(led_pins[i], i < leds_on ? 1 : 0);
   }
 }
+
+void set_leds_for_error(int error) {
+  if (error < 100) {
+    for (int i = 0; i < num_leds; i++) {
+      gpio_put(led_pins[i], 1);
+    }
+    sleep_ms(100);
+
+    for (int i = 0; i < num_leds; i++) {
+      gpio_put(led_pins[i], 0);
+    }
+    sleep_ms(100);
+  } else {
+    for (int i = 0; i < num_leds; i++) {
+      gpio_put(led_pins[i], 1);
+      sleep_ms(100);
+      gpio_put(led_pins[i], 0);
+    }
+  }
+  sleep_ms(1000);
+}

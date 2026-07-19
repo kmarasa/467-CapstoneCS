@@ -130,7 +130,7 @@ static int handle_reset(DHT20 *sensor) {
       i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
     } else if ((status & 0x18) == 0x18) {
       return 0;
-    } else if (count == attempts - 1) {
+    } else if (count == attempts - 1) { // I'm not editing as I have been requested not to - but looks like this shouldn't be behind an else if. Likely should be an if or a return after the for loop has finished.
       return not_resetting;
     }
     sleep_ms(10);
