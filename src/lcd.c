@@ -1,5 +1,7 @@
 #include "lcd.h"
-
+#include "hardware/i2c.h"
+#include "pico/stdlib.h"
+#include <stdio.h>
 
 #ifndef LCD_I2C
 #define LCD_I2C i2c0

@@ -17,7 +17,7 @@ void initialize() {
   start_DHT20_sensor(&humidity_sensor);
 
   lcd_init();
-  
+
   lcd_test();
 
   init_leds();
@@ -32,22 +32,21 @@ int main() {
   // initialize all the components
   initialize();
 
-  int DHT20Err;
+  int dht20_err;
 
   while (1) {
-    DHT20Err = take_measurement(&humidity_sensor);
-    // // get humidity from DHT20 sensor
-    if (DHT20Err == 0) {
+    dht20_err = take_measurement(&humidity_sensor);
+    if (dht20_err == 0) {
       // store humidity from sensor
       humidity = get_humidity(&humidity_sensor);
 
       set_leds(humidity);
       lcd_show_humidity(humidity);
-    } else if (DHT20Err == 2){
+    } else if (dht20_err == 2) {
       sleep_ms(1000);
     } else {
       blink();
-      lcd_print_error(DHT20Err);      
+      lcd_print_error(dht20_err);
     }
     sleep_ms(5000);
   }

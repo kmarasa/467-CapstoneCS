@@ -2,9 +2,6 @@
 #define LCD_H
 
 #include <stdint.h>
-#include "hardware/i2c.h"
-#include "pico/stdlib.h"
-#include <stdio.h>
 
 void lcd_init(void);
 void lcd_test(void);

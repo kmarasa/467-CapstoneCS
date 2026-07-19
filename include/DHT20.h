@@ -1,3 +1,6 @@
+#ifndef DHT20_H
+#define DHT20_H
+
 /*
 Header file for DHT20.c
 Contains public functions, all libraries
@@ -49,3 +52,5 @@ Public function to retrieve the humidity value store.
 Returns last retrieved humidity value as float
 */
 float get_humidity(DHT20 *sensor);
+
+#endif
