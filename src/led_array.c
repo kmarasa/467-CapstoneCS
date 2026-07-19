@@ -70,3 +70,11 @@ void set_leds(float humidity) {
     gpio_put(led_pins[i], i < leds_on ? 1 : 0);
   }
 }
+
+void blink() {
+  for (int i = 0; i < num_leds; i++) {
+    gpio_put(led_pins[i], 1);
+    sleep_ms(100);
+    gpio_put(led_pins[i], 0);
+  }
+}

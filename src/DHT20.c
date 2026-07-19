@@ -15,7 +15,7 @@ changes made to how the remaining functions run.
 /*
 Error Codes
 1 = Attempts at resetting sensor failed
-2 = Not enough time elasped between reading calls
+2 = Not enough time elapsed between reading calls
 3 = Pico generic error
 4 = Data still generating by sensor
 5 = all retrieved bytes are zero
@@ -85,6 +85,8 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 #define DHT20_I2C_SCL_PIN 5
 #endif
 
+#define I2C_BAUD_RATE 50000
+
 /*
 Private function to initialize controller for i2c channel.
 Uses defined value to set to channel i2c0 on address 0x38
@@ -94,7 +96,7 @@ static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
   sleep_ms(2000);
 #endif
-  i2c_init(DHT20_I2C, 100000);
+  i2c_init(DHT20_I2C, I2C_BAUD_RATE);
   gpio_set_function(DHT20_I2C_SDA_PIN, GPIO_FUNC_I2C);
   gpio_set_function(DHT20_I2C_SCL_PIN, GPIO_FUNC_I2C);
   gpio_pull_up(DHT20_I2C_SDA_PIN);
@@ -152,6 +154,7 @@ int start_DHT20_sensor(DHT20 *sensor) {
   initialize_values(sensor);
 
   // may need to wait at least 100ms (pg. 10)
+  sleep_ms(1000);
   // wait in controller start might work for this
 
   // reset sensor
@@ -207,6 +210,11 @@ static int verify_checksum(DHT20 *sensor) {
 }
 
 static int convert_humidity(DHT20 *sensor) {
+  // verify checksum before converting so invalid bytes never update humidity
+  if (!verify_checksum(sensor)) {
+    return incorrect_checksum;
+  }
+
   // according to pg. 10, humidity measurement
   // is store in the 1st, 2nd and 1st half of the 3rd byte
   uint32_t raw = sensor->bytes[1];
@@ -215,11 +223,6 @@ static int convert_humidity(DHT20 *sensor) {
   raw <<= 4;
   raw += (sensor->bytes[3] >> 4);
   sensor->humidity = raw / pow(2, 20) * 100;
-
-  // verify checksum
-  if (!verify_checksum(sensor)) {
-    return incorrect_checksum;
-  }
 
   return 0;
 }
@@ -252,8 +255,7 @@ int take_measurement(DHT20 *sensor) {
     sleep_ms(10);
   }
 
-  convert_humidity(sensor);
-  return 0;
+  return convert_humidity(sensor);
 }
 
 /*

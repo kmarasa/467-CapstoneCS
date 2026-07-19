@@ -37,20 +37,23 @@ pico_sdk_init()
 
 add_executable(humidity_monitor
     src/main.c
-    include/DHT20.c
-    include/led_array.c
+    src/DHT20.c
+    src/led_array.c
+    src/lcd.c
 )
 pico_set_program_name(humidity_monitor "humidity_monitor")
 pico_set_program_version(humidity_monitor "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(humidity_monitor 0)
-pico_enable_stdio_usb(humidity_monitor 0)
+pico_enable_stdio_usb(humidity_monitor 1)
 
 # Add the standard library to the build
 target_link_libraries(humidity_monitor
     pico_stdlib
     hardware_i2c
+    pico_time
+    m   
 )
 
 # Add the standard include files to the build
@@ -60,4 +63,3 @@ target_include_directories(humidity_monitor PRIVATE
 )
 
 pico_add_extra_outputs(humidity_monitor)
-
