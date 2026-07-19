@@ -88,13 +88,13 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 /*
 Private function to initialize controller for i2c channel.
 Uses defined value to set to channel i2c0 on address 0x38
-using GPIO 4/5 as the SDA and SCL pins.
+using GPI O 4/5 as the SDA and SCL pins.
 */
 static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
   sleep_ms(2000);
 #endif
-  //only breaking difference I see is this really
+  // only breaking difference I see is this really
   i2c_init(DHT20_I2C, 100000);
   gpio_set_function(DHT20_I2C_SDA_PIN, GPIO_FUNC_I2C);
   gpio_set_function(DHT20_I2C_SCL_PIN, GPIO_FUNC_I2C);
