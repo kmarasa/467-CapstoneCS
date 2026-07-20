@@ -1,6 +1,6 @@
 /*
 Functions to setup and run DHT20 sensor using
-I2C protocol on GPIO 4 and 5.
+I2C protocol on GPIO 6 and 7.
 Strong influence from:
 https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
 
@@ -10,12 +10,13 @@ changes made to how the remaining functions run.
 */
 
 #include "DHT20.h"
+
 #include <pico/time.h>
 
 /*
 Error Codes
 1 = Attempts at resetting sensor failed
-2 = Not enough time elasped between reading calls
+2 = Not enough time elapsed between reading calls
 3 = Pico generic error
 4 = Data still generating by sensor
 5 = all retrieved bytes are zero
@@ -36,7 +37,7 @@ static const int cry_inside = 100;
 static const int attempts = 5;
 
 /*
-Lookup table for quickier checking of CRC
+Lookup table for quicker checking of CRC
 Take from: https://oshgarage.com/the-crc8-checksum/
 CRC 8 lookup table
 */
@@ -73,16 +74,16 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 
 // Define which i2c channel to use and address of DHT20
 #ifndef DHT20_I2C
-#define DHT20_I2C i2c0
+#define DHT20_I2C i2c1
 #endif
 #define DHT20_ADDRESS 0x38
 
 // Define sda/scl pins for dht20 as GPIO 4/5
 #ifndef DHT20_I2C_SDA_PIN
-#define DHT20_I2C_SDA_PIN 4
+#define DHT20_I2C_SDA_PIN 6
 #endif
 #ifndef DHT20_I2C_SCL_PIN
-#define DHT20_I2C_SCL_PIN 5
+#define DHT20_I2C_SCL_PIN 7
 #endif
 
 /*
@@ -131,6 +132,10 @@ static int handle_reset(DHT20 *sensor) {
     } else if ((status & 0x18) == 0x18) {
       return 0;
     } else if (count == attempts - 1) {
+      // I'm not editing as I have been requested not to
+      // - but looks like this shouldn't be behind an
+      // else if. Likely should be an if or a return
+      // after the for loop has finished.
       return not_resetting;
     }
     sleep_ms(10);
@@ -196,7 +201,6 @@ faster calculation.
 Returns zero if match
 */
 static int verify_checksum(DHT20 *sensor) {
-
   int i;
   uint8_t CRC = 0xFF;
 
@@ -252,6 +256,7 @@ int take_measurement(DHT20 *sensor) {
     sleep_ms(10);
   }
 
+  // the 0 return is to bypass a known bug
   convert_humidity(sensor);
   return 0;
 }
