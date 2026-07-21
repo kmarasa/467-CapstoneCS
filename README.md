@@ -10,6 +10,7 @@ A capsptone embedded systems project built on the Raspberry Pi Pico (RP2040). Fi
 
 ### Build
 
+![wiring diagram](./images/wiring_diagram.png)
 ### Flash
 
 ## How It Works 
