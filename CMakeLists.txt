@@ -36,6 +36,10 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(humidity_monitor
+    src/main.c
+    include/DHT20.c
+    include/led_array.c
+    include/lcd.c
 )
 pico_set_program_name(humidity_monitor "humidity_monitor")
 pico_set_program_version(humidity_monitor "0.1")

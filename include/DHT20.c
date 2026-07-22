@@ -78,7 +78,7 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 #endif
 #define DHT20_ADDRESS 0x38
 
-// Define sda/scl pins for dht20 as GPIO 6/7
+// Define sda/scl pins for dht20 as GPIO 4/5
 #ifndef DHT20_I2C_SDA_PIN
 #define DHT20_I2C_SDA_PIN 6
 #endif
@@ -89,7 +89,7 @@ static const uint8_t request[3] = {0xAC, 0x33, 0x00};
 /*
 Private function to initialize controller for i2c channel.
 Uses defined value to set to channel i2c0 on address 0x38
-using GPIO 6/7 as the SDA and SCL pins.
+using GPIO 4/5 as the SDA and SCL pins.
 */
 static void set_DHT_controller() {
 #ifndef DHT20_SKIP_INIT_SLEEP
