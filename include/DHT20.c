@@ -174,7 +174,7 @@ of DHT20 documentation.
 Returns true if match
 */
 static int verify_checksum(DHT20 *sensor) {
-  //to be implemented
+  // to be implemented
   return 0;
 }
 
