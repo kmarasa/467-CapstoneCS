@@ -232,8 +232,8 @@ static int convert_temperature(DHT20 *sensor) {
   raw += sensor->bytes[4];
   raw <<= 8;
   raw += sensor->bytes[5];
-  //converts to Fahrenheit
-  sensor->temperature = (raw / pow(2, 20) * 200 - 50)*9/5+32;
+  // converts to Fahrenheit
+  sensor->temperature = (raw / pow(2, 20) * 200 - 50) * 9 / 5 + 32;
   return 0;
 }
 
@@ -270,10 +270,10 @@ int take_measurement(DHT20 *sensor) {
     return incorrect_checksum;
   }
 
-  if(convert_humidity(sensor)){
+  if (convert_humidity(sensor)) {
     return 1;
   }
-  if(convert_temperature(sensor)){
+  if (convert_temperature(sensor)) {
     return 1;
   }
   return 0;
