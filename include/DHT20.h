@@ -25,6 +25,7 @@ bytes (uint8_t) stores the last retrieved set of bytes
 */
 typedef struct DHT20 {
   float humidity;
+  float temperature;
   uint32_t lastRead;
   uint8_t bytes[7];
 } DHT20;
@@ -49,3 +50,9 @@ Public function to retrieve the humidity value store.
 Returns last retrieved humidity value as float
 */
 float get_humidity(DHT20 *sensor);
+
+/*
+Public function to retrieve the temperature value stored.
+Returns last retrieved temperature value as float
+*/
+float get_temperature(DHT20 *sensor);

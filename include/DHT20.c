@@ -117,6 +117,8 @@ DHT20 sensor object to zero.
 static void initialize_values(DHT20 *sensor) {
   sensor->humidity = 0;
 
+  sensor->temperature = 0;
+
   sensor->lastRead = 0;
 
   memset(sensor->bytes, 0, 7);
@@ -219,6 +221,23 @@ static int convert_humidity(DHT20 *sensor) {
 }
 
 /*
+Private function that retrieves the data relevant to
+the temperature value that converts it according to the
+formula provided by pg. 11 in the DHT20 documentation.
+*/
+static int convert_temperature(DHT20 *sensor) {
+  // stored in 2nd half of 3rd, 4th and 5th bytes
+  uint32_t raw = sensor->bytes[3] & 0x0F;
+  raw <<= 8;
+  raw += sensor->bytes[4];
+  raw <<= 8;
+  raw += sensor->bytes[5];
+  // converts to Fahrenheit
+  sensor->temperature = (raw / pow(2, 20) * 200 - 50) * 9 / 5 + 32;
+  return 0;
+}
+
+/*
 Public function that requests, retrieves and
 processes measurement from the DHT20 sensor.
 Return 0 if successful
@@ -251,7 +270,13 @@ int take_measurement(DHT20 *sensor) {
     return incorrect_checksum;
   }
 
-  return convert_humidity(sensor);
+  if (convert_humidity(sensor)) {
+    return 1;
+  }
+  if (convert_temperature(sensor)) {
+    return 1;
+  }
+  return 0;
 }
 
 /*
@@ -259,3 +284,9 @@ Public function to retrieve the humidity value store.
 Returns last retrieved humidity value as float
 */
 float get_humidity(DHT20 *sensor) { return sensor->humidity; }
+
+/*
+Public function to retrieve the temperature value stored.
+Returns last retrieved temperature value as float
+*/
+float get_temperature(DHT20 *sensor) { return sensor->temperature; }
