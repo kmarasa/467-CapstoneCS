@@ -43,9 +43,13 @@ int main() {
       temperature = get_temperature(&humidity_sensor);
       set_leds(humidity);
       lcd_show_humidity(humidity);
+      sleep_ms(2000); // wait 2 seconds to allow for screen to be read
+      lcd_show_temperature(temperature);
+      sleep_ms(2000);
+      lcd_show_humidity_and_temperature(humidity, temperature);
     } else {
       lcd_print_error(error);
     }
-    sleep_ms(1000);
+    sleep_ms(2000);
   }
 }
