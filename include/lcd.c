@@ -159,7 +159,8 @@ void lcd_show_humidity_and_temperature(float humidity, float temperature) {
   char humidity_line[11]; // max humidity_line is "100.00% RH"
   snprintf(humidity_line, sizeof(humidity_line), "%.2f%% RH", humidity);
   char temperature_line[14]; // max temperature_line is "100.00% deg C"
-  snprintf(temperature_line, sizeof(temperature_line), "%.2f deg C", temperature);
+  snprintf(temperature_line, sizeof(temperature_line), "%.2f deg C",
+           temperature);
   print_message(humidity_line, temperature_line);
 }
 
