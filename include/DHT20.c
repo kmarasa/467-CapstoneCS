@@ -4,6 +4,9 @@ I2C protocol on GPIO 6 and 7.
 Strong influence from:
 https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
 
+Documentation for DHT20:
+https://cdn.sparkfun.com/assets/8/a/1/5/0/DHT20.pdf
+
 Modifications include reduction and refactor.
 Extra unnecessary functions were rewritten and slight
 changes made to how the remaining functions run.
@@ -17,7 +20,7 @@ changes made to how the remaining functions run.
 Error Codes
 1 = Attempts at resetting sensor failed
 2 = Not enough time elapsed between reading calls
-3 = Pico generic error
+3/7/8 = Pico generic error
 4 = Data still generating by sensor
 5 = all retrieved bytes are zero
 6 = Checksum was not correct
@@ -139,22 +142,18 @@ static int handle_reset(DHT20 *sensor) {
       i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
     } else if ((status & 0x18) == 0x18) {
       return 0;
-    } else if (count == attempts - 1) {
-      // I'm not editing as I have been requested not to
-      // - but looks like this shouldn't be behind an
-      // else if. Likely should be an if or a return
-      // after the for loop has finished.
-      return not_resetting;
     }
     sleep_ms(10);
     i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
   }
+  return not_resetting;
 }
 
 /*
 Public function to setup up DHT20 sensor
 for its first time. Will create I2C controller
 and initialize the values of the sensor.
+Returns 1 if reset of sensor is unsuccessful
 Returns 0 if successful
 */
 int start_DHT20_sensor(DHT20 *sensor) {
