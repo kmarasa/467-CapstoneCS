@@ -31,6 +31,7 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 
 - VS Code
 - Raspberry Pi Pico Project extension on VS Code
+- CMake
 
 ### Build
 
