@@ -16,17 +16,19 @@ To setup and run humidity sensor device :
 ### Prerequisites
 
 You will need :
--Pi Pico
--Breadboard
--DHT20 sensor
--(5) 220Ω resistors
--Wiring
--(5) LEDs (2 green, 2 yellow, 1 red)
--LCD 16x2 Monitor
+
+- Pi Pico
+- Breadboard
+- DHT20 sensor
+- (5) 220Ω resistors
+- Wiring
+- (5) LEDs (2 green, 2 yellow, 1 red)
+- LCD 16x2 Monitor
 
 For compiling and flashing the program onto the Pi Pico, it is recommended to use:
--VS Code
--Raspberry Pi Pico Project extension on VS Code
+
+- VS Code
+- Raspberry Pi Pico Project extension on VS Code
 
 ### Build
 
