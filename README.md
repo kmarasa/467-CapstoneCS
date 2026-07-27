@@ -58,3 +58,13 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 | Dorit Dorsey    | @doritnelson
 | Margaret Barnes | @mbarnestech
 ```
+
+## DHT20 Error Codes
+Int value returned by DHT20 sensor describing what error occurred.
+* 1 = Attempts at resetting sensor failed
+* 2 = Not enough time elapsed between reading calls
+* 3/7/8 = Pico generic error. Different number describes where error occurred.
+* 4 = Data still generating by sensor
+* 5 = all retrieved bytes are zero
+* 6 = Checksum was not correct
+* 100 = No clue what went wrong.
