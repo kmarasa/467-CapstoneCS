@@ -16,7 +16,9 @@ To setup and run humidity sensor device :
 ### Prerequisites
 
 Kit including most supplies at [Amazon](https://www.amazon.com/dp/B0C3771CK8?ref=ppx_yo2ov_dt_b_fed_asin_title)
+
 Additional sensor available at [Adafruits](https://www.adafruit.com/product/5183)
+
 You will need :
 
 - Pi Pico
