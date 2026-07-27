@@ -15,6 +15,8 @@ To setup and run humidity sensor device :
 
 ### Prerequisites
 
+Kit including most supplies at [Amazon](https://www.amazon.com/dp/B0C3771CK8?ref=ppx_yo2ov_dt_b_fed_asin_title)
+Additional sensor available at [Adafruits](https://www.adafruit.com/product/5183)
 You will need :
 
 - Pi Pico
@@ -60,11 +62,13 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 ```
 
 ## DHT20 Error Codes
+
 Int value returned by DHT20 sensor describing what error occurred.
-* 1 = Attempts at resetting sensor failed
-* 2 = Not enough time elapsed between reading calls
-* 3/7/8 = Pico generic error. Different number describes where error occurred.
-* 4 = Data still generating by sensor
-* 5 = all retrieved bytes are zero
-* 6 = Checksum was not correct
-* 100 = No clue what went wrong.
+
+- 1 = Attempts at resetting sensor failed
+- 2 = Not enough time elapsed between reading calls
+- 3/7/8 = Pico generic error. Different number describes where error occurred.
+- 4 = Data still generating by sensor
+- 5 = all retrieved bytes are zero
+- 6 = Checksum was not correct
+- 100 = No clue what went wrong.
