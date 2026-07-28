@@ -43,6 +43,17 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 
 ## How It Works
 
+Pi pico will measure the humidity and temperature in a small area around it. It will then display the humidity and temperature on the LCD screen and using the LEDs.
+
+| LEDs On | Humidity % | Temp (F) |
+| ------- | ---------- | -------- |
+| 0       | 0-1%       |
+| 1       | 1-20%      |
+| 2       | 21-40%     |
+| 3       | 41-60%     |
+| 4       | 61-80%     |
+| 5       | 81-100%    |
+
 ## Project Structure
 
 ```
