@@ -46,7 +46,7 @@ int main() {
       temperature = get_temperature(&humidity_sensor);
       set_leds(humidity);
       set_rgb_led_temp(temperature);
-      lcd_show_humidity(humidity);
+      lcd_show_humidity_and_temperature(humidity, temperature);
     } else {
       lcd_print_error(error);
     }
