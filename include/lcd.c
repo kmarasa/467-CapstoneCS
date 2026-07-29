@@ -170,6 +170,12 @@ void lcd_print_error(int error) {
   print_message("DHT20 Error Code", line);
 }
 
+void lcd_print_init_error(int error) {
+  char line[10]; // max error is 100
+  snprintf(line, sizeof(line), "Code: %d", error);
+  print_message("DHT20 Init Error", line);
+}
+
 void lcd_test(void) {
   print_message("LCD Test", "Humidity Monitor");
   sleep_ms(1000);
