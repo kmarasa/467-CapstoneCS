@@ -77,3 +77,11 @@ Int value returned by DHT20 sensor describing what error occurred.
 - 5 = all retrieved bytes are zero
 - 6 = Checksum was not correct
 - 100 = No clue what went wrong.
+
+## Optional Reset Button
+
+Wire one side of button to Pin 30 (RUN) and the other side to a ground. No code needed. 
+
+To restart the Pico, simply press the button. 
+
+My primary resource for this initiative, [the Raspberry Pi website](https://www.raspberrypi.com/news/how-to-add-a-reset-button-to-your-raspberry-pi-pico/), best explains how to use this when running new code on the Pico: "push and hold the RESET button, push the BOOTSEL button, release the RESET button, then release the BOOTSEL button." Then you can run new code on the Pico.
