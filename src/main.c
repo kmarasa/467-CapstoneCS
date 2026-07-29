@@ -40,10 +40,17 @@ int main() {
     return 0;
   }
 
+  int count = 0;
+  float average_time = 0;
+
   while (1) {
     // get humidity from DHT20 sensor
     error = take_measurement(&humidity_sensor);
     if (error == 0) {
+      // increase count of measurements taken and add new time
+      count++;
+      average_time += get_measurement_time(&humidity_sensor);
+
       // store humidity from sensor
       humidity = get_humidity(&humidity_sensor);
       temperature = get_temperature(&humidity_sensor);
@@ -56,6 +63,18 @@ int main() {
     } else {
       lcd_print_error(error);
     }
+
     sleep_ms(2000);
+
+    // when count reaches 10, calculate average
+    // and print then reset
+    if (count == 10) {
+      average_time /= count;
+      // insert display on LCD for average time
+      printf("average time for 10 measures is %f\n", average_time);
+      count = 0;
+      average_time = 0;
+      sleep_ms(2000);
+    }
   }
 }
