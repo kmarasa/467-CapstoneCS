@@ -12,6 +12,7 @@ changes made to how the remaining functions run.
 #include "DHT20.h"
 
 #include <pico/time.h>
+#include <time.h>
 
 /*
 Error Codes
@@ -185,7 +186,7 @@ Returns 4 if measurement is not complete
 Returns 5 if measurement bytes were empty
 */
 static int retrieve_measure(DHT20 *sensor) {
-  float time_start = to_ms_since_boot(get_absolute_time());
+  
   if (i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, sensor->bytes, 7, false) ==
       PICO_ERROR_GENERIC) {
     return pico_error;
@@ -204,9 +205,8 @@ static int retrieve_measure(DHT20 *sensor) {
       return no_measurement;
     }
   }
-
+  
   sensor->lastRead = to_ms_since_boot(get_absolute_time());
-  sensor->last_measurement_time = sensor->lastRead - time_start;
   return 0;
 }
 
@@ -256,6 +256,7 @@ Returns 6 if checksum does not match
 Returns 7 if error with pico when writing request to measure
 */
 int take_measurement(DHT20 *sensor) {
+  clock_t time_start = clock();
   // check time since last measurement
   if (to_ms_since_boot(get_absolute_time()) - sensor->lastRead < 1000) {
     return have_patience;
@@ -288,6 +289,10 @@ int take_measurement(DHT20 *sensor) {
   // data used in them has already been verified)
   convert_humidity(sensor);
   convert_temperature(sensor);
+
+  clock_t end_time = clock();
+  sensor->last_measurement_time = ((double)(end_time - time_start))/CLOCKS_PER_SEC;
+  
 
   return 0;
 }

@@ -6,6 +6,10 @@ float humidity = 0;
 float temperature = 0;
 DHT20 humidity_sensor;
 
+//used for calculating average time of run
+int count = 0;
+double average_time = 0;
+
 /*
  *Run setup for main program
  */
@@ -40,9 +44,6 @@ int main() {
     return 0;
   }
 
-  int count = 0;
-  float average_time = 0;
-
   while (1) {
     // get humidity from DHT20 sensor
     error = take_measurement(&humidity_sensor);
@@ -70,8 +71,7 @@ int main() {
     // and print then reset
     if (count == 10) {
       average_time /= count;
-      // insert display on LCD for average time
-      printf("average time for 10 measures is %f\n", average_time);
+      //insert print to lcd here
       count = 0;
       average_time = 0;
       sleep_ms(2000);

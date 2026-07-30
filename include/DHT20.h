@@ -14,6 +14,7 @@ to run the DHT20 sensor.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /*
 Defines DHT20 object that will store information
@@ -26,7 +27,7 @@ bytes (uint8_t) stores the last retrieved set of bytes
 typedef struct DHT20 {
   float humidity;
   float temperature;
-  float last_measurement_time;
+  double last_measurement_time;
   uint32_t lastRead;
   uint8_t bytes[7];
 } DHT20;
