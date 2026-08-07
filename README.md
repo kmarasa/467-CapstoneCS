@@ -78,7 +78,9 @@ Int value returned by DHT20 sensor describing what error occurred.
 
 ## Optional Reset Button
 
-Wire one side of button to Pin 30 (RUN) and the other side to a ground. No code needed. 
+Wire one side of button to Pin 30 (RUN) and the other side to a ground. No code needed. Here is a picture of how the button should be attached to the wires (here the blue wire is attached to Pin 30 and the grey wire is attached to a ground).
+
+![reset button example](./images/reset_button.png)
 
 To restart the Pico, simply press the button. 
 
