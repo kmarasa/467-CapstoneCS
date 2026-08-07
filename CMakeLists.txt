@@ -61,4 +61,3 @@ target_include_directories(humidity_monitor PRIVATE
 )
 
 pico_add_extra_outputs(humidity_monitor)
-

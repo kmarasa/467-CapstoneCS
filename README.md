@@ -39,8 +39,6 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 
 ![wiring diagram](./images/wiring_diagram.png)
 
-Optional Reset Button Switch: wire one side of button to Pin 30 (RUN) and the other side to a ground. No code needed; see [here](https://www.raspberrypi.com/news/how-to-add-a-reset-button-to-your-raspberry-pi-pico/) for more detail.
-
 ### Flash
 
 ## How It Works
