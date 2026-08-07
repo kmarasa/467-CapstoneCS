@@ -9,13 +9,13 @@ DHT20 humidity_sensor;
 /*
  *Run setup for main program
  */
-void initialize() {
+int initialize() {
   /*
    *Initialize DHT20 sensor on GPIO 4/5 with address 0x38
    *Will also set initial values on DHT20 object
    *Returns 0 if successful
    */
-  start_DHT20_sensor(&humidity_sensor);
+  int err = start_DHT20_sensor(&humidity_sensor);
 
   init_leds();
 
@@ -24,6 +24,8 @@ void initialize() {
   lcd_init();
 
   lcd_test();
+
+  return err;
 }
 
 /*
@@ -31,9 +33,13 @@ Runs main program loop after running setup
 */
 int main() {
   // initialize all the components
-  initialize();
+  int error = initialize();
 
-  int error = 0;
+  if (error != 0) {
+    lcd_print_init_error(error);
+    return 0;
+  }
+
   while (1) {
     // get humidity from DHT20 sensor
     error = take_measurement(&humidity_sensor);
