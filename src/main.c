@@ -38,7 +38,7 @@ int main() {
   // initialize all the components
   int error = initialize();
 
-   if (error != 0) {
+  if (error != 0) {
     lcd_print_init_error(error);
     return 0;
   }
