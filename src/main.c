@@ -3,6 +3,7 @@
 #include "../include/led_array.h"
 
 float humidity = 0;
+float temperature = 0;
 DHT20 humidity_sensor;
 
 /*
@@ -39,7 +40,7 @@ int main() {
     if (error == 0) {
       // store humidity from sensor
       humidity = get_humidity(&humidity_sensor);
-
+      temperature = get_temperature(&humidity_sensor);
       set_leds(humidity);
       lcd_show_humidity(humidity);
     } else {
