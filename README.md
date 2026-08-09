@@ -45,14 +45,20 @@ For compiling and flashing the program onto the Pi Pico, it is recommended to us
 
 Pi pico will measure the humidity and temperature in a small area around it. It will then display the humidity and temperature on the LCD screen and using the LEDs.
 
-| LEDs On | Humidity % | Temp (F) |
-| ------- | ---------- | -------- |
+| LEDs On | Humidity % |
+| ------- | ---------- |
 | 0       | 0-1%       |
 | 1       | 1-20%      |
 | 2       | 21-40%     |
 | 3       | 41-60%     |
 | 4       | 61-80%     |
 | 5       | 81-100%    |
+
+| LED Color | Temp (F) |
+| --------- | -------- |
+| Blue Hue  | < 32     |
+| Green Hue | 32-100   |
+| Red Hue   | > 100    |
 
 ## Project Structure
 
@@ -81,8 +87,9 @@ Int value returned by DHT20 sensor describing what error occurred.
 
 - 1 = Attempts at resetting sensor failed
 - 2 = Not enough time elapsed between reading calls
-- 3/7/8 = Pico generic error. Different number describes where error occurred.
+- 3 = Pico generic error
 - 4 = Data still generating by sensor
 - 5 = all retrieved bytes are zero
 - 6 = Checksum was not correct
+- 7 = Failed to write to sensor
 - 100 = No clue what went wrong.
