@@ -1,6 +1,7 @@
 #include "../include/DHT20.h"
 #include "../include/lcd.h"
 #include "../include/led_array.h"
+#include "../include/led_temp.h"
 
 float humidity = 0;
 float temperature = 0;
@@ -20,6 +21,8 @@ int initialize() {
   init_leds();
 
   test_leds();
+
+  init_rgb_led();
 
   lcd_init();
 
@@ -48,6 +51,7 @@ int main() {
       humidity = get_humidity(&humidity_sensor);
       temperature = get_temperature(&humidity_sensor);
       set_leds(humidity);
+      set_rgb_led_temp(temperature);
       lcd_show_humidity(humidity);
       sleep_ms(2000); // wait 2 seconds to allow for screen to be read
       lcd_show_temperature(temperature);
