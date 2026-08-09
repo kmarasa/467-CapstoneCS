@@ -4,6 +4,9 @@ I2C protocol on GPIO 6 and 7.
 Strong influence from:
 https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
 
+Documentation for DHT20:
+https://cdn.sparkfun.com/assets/8/a/1/5/0/DHT20.pdf
+
 Modifications include reduction and refactor.
 Extra unnecessary functions were rewritten and slight
 changes made to how the remaining functions run.
@@ -142,16 +145,11 @@ static int handle_reset(DHT20 *sensor) {
       i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, reset_3, 3, false);
     } else if ((status & 0x18) == 0x18) {
       return 0;
-    } else if (count == attempts - 1) {
-      // I'm not editing as I have been requested not to
-      // - but looks like this shouldn't be behind an
-      // else if. Likely should be an if or a return
-      // after the for loop has finished.
-      return not_resetting;
     }
     sleep_ms(10);
     i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, &status, 1, false);
   }
+  return not_resetting;
 }
 
 /*

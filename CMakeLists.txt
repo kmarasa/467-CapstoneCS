@@ -40,6 +40,7 @@ add_executable(humidity_monitor
     include/DHT20.c
     include/led_array.c
     include/lcd.c
+    include/led_temp.c
 )
 pico_set_program_name(humidity_monitor "humidity_monitor")
 pico_set_program_version(humidity_monitor "0.1")
@@ -52,6 +53,7 @@ pico_enable_stdio_usb(humidity_monitor 0)
 target_link_libraries(humidity_monitor
     pico_stdlib
     hardware_i2c
+    hardware_pwm
 )
 
 # Add the standard include files to the build

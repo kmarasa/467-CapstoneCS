@@ -149,10 +149,31 @@ void lcd_show_humidity(float humidity) {
   print_message("Humidity", line);
 }
 
+void lcd_show_temperature(float temperature) {
+  char line[14]; // max line is "100.00% deg F"
+  snprintf(line, sizeof(line), "%.2f deg F", temperature);
+  print_message("Temperature", line);
+}
+
+void lcd_show_humidity_and_temperature(float humidity, float temperature) {
+  char humidity_line[11]; // max humidity_line is "100.00% RH"
+  snprintf(humidity_line, sizeof(humidity_line), "%.2f%% RH", humidity);
+  char temperature_line[14]; // max temperature_line is "100.00% deg F"
+  snprintf(temperature_line, sizeof(temperature_line), "%.2f deg F",
+           temperature);
+  print_message(humidity_line, temperature_line);
+}
+
 void lcd_print_error(int error) {
   char line[4]; // max error is 100
   snprintf(line, sizeof(line), "%d", error);
   print_message("DHT20 Error Code", line);
+}
+
+void lcd_print_init_error(int error) {
+  char line[10]; // max error is 100
+  snprintf(line, sizeof(line), "Code: %d", error);
+  print_message("DHT20 Init Error", line);
 }
 
 void lcd_test(void) {
