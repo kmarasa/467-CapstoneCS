@@ -103,3 +103,9 @@ Wire one side of button to Pin 30 (RUN) and the other side to a ground. No code 
 To restart the Pico, simply press the button.
 
 My primary resource for this initiative, [the Raspberry Pi website](https://www.raspberrypi.com/news/how-to-add-a-reset-button-to-your-raspberry-pi-pico/), best explains how to use this when running new code on the Pico: "push and hold the RESET button, push the BOOTSEL button, release the RESET button, then release the BOOTSEL button." Then you can run new code on the Pico.
+
+## Optional Temperature LED
+
+If you are using the LED-RGB from the recommended kit, the longest leg should be connected to ground and the other 3 should be connected to GP 10/11/12 with a 220 ohm resistor. See below diagram:
+
+![RGB LED example](./images/RGB_LED_wiring.png)
