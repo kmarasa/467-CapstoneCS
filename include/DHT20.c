@@ -228,6 +228,7 @@ static int convert_humidity(DHT20 *sensor) {
 Private function that retrieves the data relevant to
 the temperature value that converts it according to the
 formula provided by pg. 11 in the DHT20 documentation.
+Returns 0 upon successful converting
 */
 static int convert_temperature(DHT20 *sensor) {
   // stored in 2nd half of 3rd, 4th and 5th bytes
@@ -280,12 +281,10 @@ int take_measurement(DHT20 *sensor) {
     return incorrect_checksum;
   }
 
-  if (convert_humidity(sensor)) {
-    return 1;
-  }
-  if (convert_temperature(sensor)) {
-    return 1;
-  }
+  convert_humidity(sensor);
+
+  convert_temperature(sensor);
+  
   return 0;
 }
 
