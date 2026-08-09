@@ -21,6 +21,7 @@ Error Codes
 4 = Data still generating by sensor
 5 = all retrieved bytes are zero
 6 = Checksum was not correct
+7 = failed to write to pico
 100 = No clue what went wrong.
 */
 static const int not_resetting = 1;
@@ -29,45 +30,11 @@ static const int pico_error = 3;
 static const int still_measuring = 4;
 static const int no_measurement = 5;
 static const int incorrect_checksum = 6;
-static const int pico_error_1 = 7;
-static const int pico_error_2 = 8;
+static const int write_fail = 7;
 static const int cry_inside = 100;
 
 // max amount of attempts to try to connect to sensor
 static const int attempts = 5;
-
-/*
-Private function used to verify the bytes of
-data sent by the sensor using CRC8 maxim
-with initial value of 0xFF according to pg. 10
-of DHT20 documentation.
-Returns true(1) if match
-*/
-static int verify_checksum(DHT20 *sensor) {
-  // sets initial value of crc
-  uint8_t crc = 0xFF;
-  // iterates through the bytes of data
-  for (int i = 0; i < 6; i++) {
-    // xors crc with the current byte
-    crc = crc ^ sensor->bytes[i];
-    // iterates through the digits in the byte
-    for (int j = 0; j < 8; j++) {
-      /*
-      Checks if the current digit is 1 then
-      shifts to the left and applies the polynomial
-      function (as according to pg. 10) if the
-      current digit is 1
-      */
-      if (crc & 0x80) {
-        crc = (crc << 1) ^ 0x31;
-      } else {
-        crc = (crc << 1);
-      }
-    }
-  }
-  // last byte is the crc sent by the sensor
-  return crc == sensor->bytes[6];
-}
 
 /*
 Defined on pg. 10 of DHT20 Documentation
@@ -125,11 +92,45 @@ static void initialize_values(DHT20 *sensor) {
 }
 
 /*
+Private function used to verify the bytes of
+data sent by the sensor using CRC8 maxim
+with initial value of 0xFF according to pg. 10
+of DHT20 documentation.
+Returns true(1) if match
+Returns false(0) if not matching
+*/
+static int verify_checksum(DHT20 *sensor) {
+  // sets initial value of crc
+  uint8_t crc = 0xFF;
+  // iterates through the bytes of data
+  for (int i = 0; i < 6; i++) {
+    // xors crc with the current byte
+    crc = crc ^ sensor->bytes[i];
+    // iterates through the digits in the byte
+    for (int j = 0; j < 8; j++) {
+      /*
+      Checks if the current digit is 1 then
+      shifts to the left and applies the polynomial
+      function (as according to pg. 10) if the
+      current digit is 1
+      */
+      if (crc & 0x80) {
+        crc = (crc << 1) ^ 0x31;
+      } else {
+        crc = (crc << 1);
+      }
+    }
+  }
+  // last byte is the crc sent by the sensor
+  return crc == sensor->bytes[6];
+}
+
+/*
 Private function to handle resetting sensor
 Instructions in DHT20 sensor documentation pg. 10
-Checks if status and 0x18 =/= 0x18 and sends
-reset messages if not.
+Checks status and sends reset messages if not.
 Returns 0 if success
+Returns 1 if reset unsuccessful
 */
 static int handle_reset(DHT20 *sensor) {
   uint8_t status;
@@ -158,6 +159,7 @@ Public function to setup up DHT20 sensor
 for its first time. Will create I2C controller
 and initialize the values of the sensor.
 Returns 0 if successful
+Returns 1 if reset unsuccessful
 */
 int start_DHT20_sensor(DHT20 *sensor) {
   // start controller
@@ -177,6 +179,9 @@ int start_DHT20_sensor(DHT20 *sensor) {
 Private function used to check if measurement
 is ready and verify the contents.
 Returns 0 if successful.
+Returns 3 if pico error
+Returns 4 if measurement not completed after several attempts
+Returns 5 if no measurement taken (all zeros returned from sensor)
 */
 static int retrieve_measure(DHT20 *sensor) {
   if (i2c_read_blocking(DHT20_I2C, DHT20_ADDRESS, sensor->bytes, 7, false) ==
@@ -206,6 +211,7 @@ static int retrieve_measure(DHT20 *sensor) {
 Private function that retrieves the data relevant to
 the humidity value then converts it according to the
 formula provided by pg. 11 in the DHT20 documentation.
+Returns 0 upon successful converting
 */
 static int convert_humidity(DHT20 *sensor) {
   // according to pg. 10, humidity measurement
@@ -241,6 +247,11 @@ static int convert_temperature(DHT20 *sensor) {
 Public function that requests, retrieves and
 processes measurement from the DHT20 sensor.
 Return 0 if successful
+Returns 3 if pico error
+Returns 4 if measurement not completed after several attempts
+Returns 5 if no measurement taken (all zeros returned from sensor)
+Returns 6 if crc does not match (failed checksum)
+Returns 7 if failed to write to sensor
 */
 int take_measurement(DHT20 *sensor) {
   // check time since last measurement
@@ -251,16 +262,17 @@ int take_measurement(DHT20 *sensor) {
   // send message to dht20 to start measuring
   if (i2c_write_blocking(DHT20_I2C, DHT20_ADDRESS, request, 3, false) ==
       PICO_ERROR_GENERIC) {
-    return pico_error_1;
+    return write_fail;
   }
 
   // wait until dht20 has finished collecting measurement
   sleep_ms(80);
   for (int count = 0; count < attempts; count++) {
-    if (!retrieve_measure(sensor)) {
+    int result = retrieve_measure(sensor);
+    if (!result) {
       break;
     } else if (count == attempts - 1) {
-      return pico_error_2;
+      return result;
     }
     sleep_ms(10);
   }
