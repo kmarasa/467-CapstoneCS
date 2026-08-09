@@ -284,7 +284,7 @@ int take_measurement(DHT20 *sensor) {
   convert_humidity(sensor);
 
   convert_temperature(sensor);
-  
+
   return 0;
 }
 
