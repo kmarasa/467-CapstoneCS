@@ -4,6 +4,9 @@ I2C protocol on GPIO 6 and 7.
 Strong influence from:
 https://github.com/sampsapenna/dht20-pico/tree/788e6020a24921907a98106239692eedc2d0cab3
 
+Documentation for DHT20:
+https://cdn.sparkfun.com/assets/8/a/1/5/0/DHT20.pdf
+
 Modifications include reduction and refactor.
 Extra unnecessary functions were rewritten and slight
 changes made to how the remaining functions run.
