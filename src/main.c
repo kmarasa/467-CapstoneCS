@@ -52,9 +52,11 @@ int main() {
       temperature = get_temperature(&humidity_sensor);
       set_leds(humidity);
       set_rgb_led_temp(temperature);
-      // optional views; commented out in favor of viewing humidity and temperature in one readout
+      // optional views; commented out in favor of viewing humidity and
+      // temperature in one readout
       // lcd_show_humidity(humidity);
-      // sleep_ms(2000); // wait 2 seconds to allow for screen to be read
+      // sleep_ms(2000);
+      // // wait 2 seconds to allow for screen to be read
       // lcd_show_temperature(temperature);
       // sleep_ms(2000);
       lcd_show_humidity_and_temperature(humidity, temperature);
