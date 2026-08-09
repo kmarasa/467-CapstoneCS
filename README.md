@@ -103,3 +103,7 @@ My primary resource for this initiative, [the Raspberry Pi website](https://www.
 If you are using the LED-RGB from the recommended kit, the longest leg should be connected to ground and the other 3 should be connected to GP 10/11/12 with a 220 ohm resistor. See below diagram:
 
 ![RGB LED example](./images/RGB_LED_wiring.png)
+
+## AI Usage note
+
+This project was done primarily without AI. However, GitHub Copilot helped write our c_cpp_properties.json file. More information on that is [here](./.vscode/copilot_note.md). 
