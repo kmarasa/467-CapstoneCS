@@ -2,7 +2,7 @@
 
 Raspberry Pi Pico firmware for a real-time indoor humidity monitor with a six stage LED array and numeric display, written in C
 
-A capstone embedded systems project built on the Raspberry Pi Pico (RP2040). Firmware reads humidity data from a DHT20 sensor over I2C and drives two outputs: a six stage LED bar that gives an at-a-glance humidity level, and a numeric LED display showing the exact reading. The project is implemented in a compiled language (C) to explore memory management and low-level hardware control in a resource-constrained environment.
+A capsptone embedded systems project built on the Raspberry Pi Pico (RP2040). Firmware reads humidity data from a DHT20 sensor over I2C and drives two outputs: a six stage LED bar that gives an at-a-glance humidity level, and a numeric LED display showing the exact reading. The project is implemented in a compiled language (C) to explore memory management and low-level hardware control in a resource-constrained environment.
 
 ## Getting Started
 
@@ -64,6 +64,12 @@ Pi pico will measure the humidity and temperature in a small area around it. It 
 
 ```
 ├── src/                   # Source files
+│   ├── main.c             # if C/C++
+├── include/               # C/C++ headers
+├── diagrams/              # Wiring schematics
+├── CMakeLists.txt         # if C/C++
+├── .gitignore             # Specifies intentionally untracked files
+└── README.md              # Project documentation
 ```
 
 ## Team
@@ -103,7 +109,3 @@ My primary resource for this initiative, [the Raspberry Pi website](https://www.
 If you are using the LED-RGB from the recommended kit, the longest leg should be connected to ground and the other 3 should be connected to GP 10/11/12 with a 220 ohm resistor. See below diagram:
 
 ![RGB LED example](./images/RGB_LED_wiring.png)
-
-## AI Usage note
-
-This project was done primarily without AI. However, GitHub Copilot helped write our c_cpp_properties.json file. More information on that is [here](./.vscode/copilot_note.md). 
