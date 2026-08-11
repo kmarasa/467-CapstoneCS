@@ -115,6 +115,8 @@ void lcd_string(const char *s) {
   }
 }
 
+// This is initialization code pulled from several places in the example code.
+// It it not all strictly necessary for this project as is but may be needed for later updates.
 void lcd_init() {
   i2c_init(i2c_default, 100 * 1000);
   gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -135,6 +137,9 @@ void lcd_init() {
   lcd_clear();
 }
 
+// This clears the LCD screen and then prints a two-line message.
+// The message is not cleared until the device is powered off 
+// or lcd_clear() is called again.
 static void print_message(const char *line1, const char *line2) {
   lcd_clear();
   lcd_set_cursor(0, (MAX_CHARS / 2) - strlen(line1) / 2);
@@ -143,39 +148,45 @@ static void print_message(const char *line1, const char *line2) {
   lcd_string(line2);
 }
 
+// This function shows the percentage relative humidity.
 void lcd_show_humidity(float humidity) {
   char line[11]; // max line is "100.00% RH"
   snprintf(line, sizeof(line), "%.2f%% RH", humidity);
   print_message("Humidity", line);
 }
 
+// This function shows the temperature in Fahrenheit.
 void lcd_show_temperature(float temperature) {
-  char line[14]; // max line is "100.00% deg F"
+  char line[14]; // max line is "100.00 deg F"
   snprintf(line, sizeof(line), "%.2f deg F", temperature);
   print_message("Temperature", line);
 }
 
+// This function shows the humidity on the top line and the temperature on the bottom line.
 void lcd_show_humidity_and_temperature(float humidity, float temperature) {
   char humidity_line[11]; // max humidity_line is "100.00% RH"
   snprintf(humidity_line, sizeof(humidity_line), "%.2f%% RH", humidity);
-  char temperature_line[14]; // max temperature_line is "100.00% deg F"
+  char temperature_line[14]; // max temperature_line is "100.00 deg F"
   snprintf(temperature_line, sizeof(temperature_line), "%.2f deg F",
            temperature);
   print_message(humidity_line, temperature_line);
 }
 
+// This function prints a DHT20 measurement error.
 void lcd_print_error(int error) {
   char line[4]; // max error is 100
   snprintf(line, sizeof(line), "%d", error);
   print_message("DHT20 Error Code", line);
 }
 
+// This function prints a DHT20 initialization error.
 void lcd_print_init_error(int error) {
   char line[10]; // max error is 100
   snprintf(line, sizeof(line), "Code: %d", error);
   print_message("DHT20 Init Error", line);
 }
 
+// This is used as a test of the LCD screen on initialization.
 void lcd_test(void) {
   print_message("LCD Test", "Humidity Monitor");
   sleep_ms(1000);
