@@ -64,6 +64,12 @@ Pi pico will measure the humidity and temperature in a small area around it. It 
 
 ```
 ├── src/                   # Source files
+│   ├── main.c             # if C/C++
+├── include/               # C/C++ headers
+├── diagrams/              # Wiring schematics
+├── CMakeLists.txt         # if C/C++
+├── .gitignore             # Specifies intentionally untracked files
+└── README.md              # Project documentation
 ```
 
 ## Team
