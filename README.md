@@ -69,9 +69,9 @@ The Raspberry Pi Pico will measure the humidity and temperature in a small area 
 
 ```
 ├── src/                   # Source files
-│   ├── main.c             # Our main program
-├── include/               # All code and header files supporting the main program
-├── images/                # Wiring schematics
+│   ├── main.c             # if C/C++
+├── include/               # C/C++ headers
+├── diagrams/              # Wiring schematics
 ├── CMakeLists.txt         # if C/C++
 ├── .gitignore             # Specifies intentionally untracked files
 └── README.md              # Project documentation
