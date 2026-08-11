@@ -38,7 +38,7 @@ int main() {
   // initialize all the components
   int error = initialize();
 
-  // if there is an initialization error, 
+  // if there is an initialization error,
   // show the error and stop the program
   if (error != 0) {
     lcd_print_init_error(error);

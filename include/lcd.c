@@ -116,7 +116,8 @@ void lcd_string(const char *s) {
 }
 
 // This is initialization code pulled from several places in the example code.
-// It it not all strictly necessary for this project as is but may be needed for later updates.
+// It it not all strictly necessary for this project as is but may be needed
+// for later updates.
 void lcd_init() {
   i2c_init(i2c_default, 100 * 1000);
   gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -138,7 +139,7 @@ void lcd_init() {
 }
 
 // This clears the LCD screen and then prints a two-line message.
-// The message is not cleared until the device is powered off 
+// The message is not cleared until the device is powered off
 // or lcd_clear() is called again.
 static void print_message(const char *line1, const char *line2) {
   lcd_clear();
@@ -162,7 +163,8 @@ void lcd_show_temperature(float temperature) {
   print_message("Temperature", line);
 }
 
-// This function shows the humidity on the top line and the temperature on the bottom line.
+// This function shows the humidity on the top line and the temperature on
+// the bottom line.
 void lcd_show_humidity_and_temperature(float humidity, float temperature) {
   char humidity_line[11]; // max humidity_line is "100.00% RH"
   snprintf(humidity_line, sizeof(humidity_line), "%.2f%% RH", humidity);
