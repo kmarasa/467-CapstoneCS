@@ -18,8 +18,7 @@ To setup and run humidity sensor device :
 5. Depending on your setup, either choose "Run Project" or "Flash Project" from the Pico SDK Extension menu to install the code onto the Pico.
 4. The device will start running immediately, but can be disconnected and moved to another location. Simply plug in the device to start the embedded program.
 
-You can view a video walkthrough of the setup [here](https://www.youtube.com/watch?v=-
-vsj1P_PFFc).
+You can view a video walkthrough of the setup [here](https://www.youtube.com/watch?v=-vsj1P_PFFc).
 
 ### Prerequisites
 
