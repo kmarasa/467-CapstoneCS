@@ -4,14 +4,22 @@ Raspberry Pi Pico firmware for a real-time indoor humidity monitor with a six st
 
 A capstone embedded systems project built on the Raspberry Pi Pico (RP2040). Firmware reads humidity data from a DHT20 sensor over I2C and drives two outputs: a six stage LED bar that gives an at-a-glance humidity level, and a numeric LED display showing the exact reading. The project is implemented in a compiled language (C) to explore memory management and low-level hardware control in a resource-constrained environment.
 
+A video walkthrough of our project and development process is available [here](https://www.youtube.com/watch?v=Rh1AspDqYOo).
+
 ## Getting Started
 
 To setup and run humidity sensor device :
 
-1. Start by wiring Pi Pico and components according to wiring diagram in build section
-2. Download and unzip code
-3. Compile and flash code unto Pi Pico
-4. Power device
+1. Start by wiring the Pico and components according to wiring diagram in build section.
+2. Clone this repository onto your computer.
+3. Install [VS Code](https://code.visualstudio.com/download) and the [Raspberry Pi Pico SDK](https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico) as a VS Code Extension
+3. Compile the code.
+4. Connect Pico to your computer while holding the BOOTSEL button.
+5. Depending on your setup, either choose "Run Project" or "Flash Project" from the Pico SDK Extension menu to install the code onto the Pico.
+4. The device will start running immediately, but can be disconnected and moved to another location. Simply plug in the device to start the embedded program.
+
+You can view a video walkthrough of the setup [here](https://www.youtube.com/watch?v=-
+vsj1P_PFFc).
 
 ### Prerequisites
 
@@ -19,9 +27,9 @@ Kit including most supplies at [Amazon](https://www.amazon.com/dp/B0C3771CK8?ref
 
 Additional sensor available at [Adafruits](https://www.adafruit.com/product/5183)
 
-You will need :
+From the supplies above, you will need :
 
-- Pi Pico
+- Raspberry Pi Pico
 - Breadboard
 - DHT20 sensor
 - (5) 220Ω resistors
@@ -31,19 +39,17 @@ You will need :
 
 For compiling and flashing the program onto the Pi Pico, it is recommended to use:
 
-- VS Code
-- Raspberry Pi Pico Project extension on VS Code
-- CMake
+- [VS Code](https://code.visualstudio.com/download)
+- [Raspberry Pi Pico Project extension on VS Code](https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico)
+- [CMake](https://cmake.org/)
 
 ### Build
 
 ![wiring diagram](./images/wiring_diagram.png)
 
-### Flash
-
 ## How It Works
 
-Pi pico will measure the humidity and temperature in a small area around it. It will then display the humidity and temperature on the LCD screen and using the LEDs.
+The Raspberry Pi Pico will measure the humidity and temperature in a small area around it using the DHT20 sensor. It will then display the humidity and temperature on the LCD screen and using the LEDs.
 
 | LEDs On | Humidity % |
 | ------- | ---------- |
@@ -64,6 +70,12 @@ Pi pico will measure the humidity and temperature in a small area around it. It 
 
 ```
 ├── src/                   # Source files
+│   ├── main.c             # Our main program
+├── include/               # All code and header files supporting the main program
+├── images/                # Wiring schematics
+├── CMakeLists.txt         # if C/C++
+├── .gitignore             # Specifies intentionally untracked files
+└── README.md              # Project documentation
 ```
 
 ## Team
